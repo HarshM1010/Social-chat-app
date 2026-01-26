@@ -7,7 +7,7 @@ import RequestsList from './RequestsList';
 import GroupsList from './GroupsList';
 
 type SidebarProps = {
-  onSelectChat: (userId: string, user: any, isGroup?: boolean) => void;
+  onSelectChat: (userId: string | null, user: any, isGroup?: boolean) => void;
   currentUser: {
     userId: string,
     username: string;

@@ -32,7 +32,7 @@ export default function HomePage() {
   // }, [loading, data, error]);
   const currentUserId = data?.getCurrentUser?.userId || ''; 
   const currentUsername = data?.getCurrentUser?.username || '';
-  const handleSelectChat = useCallback((userId: string, user: any, isGroupChat = false) => {
+  const handleSelectChat = useCallback((userId: string | null, user: any, isGroupChat = false) => {
     setSelectedChat(userId);
     setSelectedUser(user);
     setIsGroup(isGroupChat);

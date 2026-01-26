@@ -16,7 +16,7 @@ type GetAllGroupsResponse = {
 };
 
 type GroupsListProps = {
-  onSelectChat: (groupId: string, group: any, isGroup: boolean) => void;
+  onSelectChat: (groupId: string | null, group: any, isGroup: boolean) => void;
   currentUser: {
     userId: string,
     username: string,
