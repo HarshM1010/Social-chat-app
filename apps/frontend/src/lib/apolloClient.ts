@@ -3,14 +3,18 @@ import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { createClient } from 'graphql-ws';
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
 const httpLink = new HttpLink({
-  uri: 'http://localhost:3001/graphql',
+  uri: `${BACKEND_URL}/graphql`,
   credentials: 'include',
 });
 
+const wsUrl = BACKEND_URL.replace(/^http/, 'ws') + '/graphql';
+
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://localhost:3001/graphql',
+    url: wsUrl,
   })
 );
 
