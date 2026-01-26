@@ -13,7 +13,7 @@ type ProfileModalProps = {
     friendsCount: number;
     groupsCount: number;
     preference: string | null;
-  };
+  } | null;
   onUpdatePreference: (choice: 'Messi' | 'Ronaldo') => void;
 };
 
