@@ -122,7 +122,6 @@ export class ChatResolver {
 
   @Subscription(() => Message, {
     name: 'messageAdded',
-    // This filter ensures users only receive messages for the room they are in
     filter: (payload, variables) =>
       payload.messageAdded.roomId === variables.roomId,
   })

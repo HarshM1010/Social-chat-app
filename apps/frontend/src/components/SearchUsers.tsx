@@ -7,11 +7,20 @@ import { SEND_FRIEND_REQUEST, CANCEL_FRIEND_REQUEST, FORGET_FRIEND, ACCEPT_FRIEN
 import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 
+type SearchUsersResponse = {
+  searchUsers: Array<{
+    userId: string;
+    name: string;
+    username: string;
+    requestStatus: 'FRIEND' | 'SENT' | 'RECEIVED' | 'NONE';
+  }>;
+};
+
 export default function SearchUsers() {
   const [query, setQuery] = useState('');
   const [loading,setLoading] = useState(false);
 
-  const [searchUsers, { data, loading: searchLoading }] = useLazyQuery(SEARCH_USERS, {
+  const [searchUsers, { data, loading: searchLoading }] = useLazyQuery<SearchUsersResponse>(SEARCH_USERS, {
     fetchPolicy: 'network-only',
   });
 

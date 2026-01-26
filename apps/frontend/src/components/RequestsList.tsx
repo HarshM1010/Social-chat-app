@@ -9,6 +9,10 @@ import { LISTEN_FOR_SENT_REQUEST, LISTEN_FOR_CANCELLED_REQUEST } from '@/graphql
 import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 
+type GetAllRequestsResponse = {
+  getAllRequests: Array<{ userId: string; name: string; username: string }>;
+};
+
 type RequestsListProps = {
   currentUser: {
     userId: string,
@@ -18,7 +22,7 @@ type RequestsListProps = {
 
 export default function RequestsList({ currentUser }: RequestsListProps) {
   const [loadingRequest,setLoadingRequest] = useState(false);
-  const { data, loading, error } = useQuery(GET_ALL_REQUESTS);
+  const { data, loading, error } = useQuery<GetAllRequestsResponse>(GET_ALL_REQUESTS);
   
   const [acceptRequest] = useMutation(ACCEPT_FRIEND_REQUEST, {
     refetchQueries: [

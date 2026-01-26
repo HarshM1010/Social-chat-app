@@ -8,9 +8,13 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
 import axios from 'axios';
 
+type GetSuggestionsResponse = {
+  getSuggestions: Array<{ userId: string; name: string; username: string }>;
+};
+
 export default function SuggestionsList() {
   const [loadingSendFr,setLoadingSendFr] = useState(false);
-  const { data, loading, error } = useQuery(GET_SUGGESTIONS);
+  const { data, loading, error } = useQuery<GetSuggestionsResponse>(GET_SUGGESTIONS);
   const [sendRequest] = useMutation(SEND_FRIEND_REQUEST, {
     refetchQueries: [
       { query: GET_SUGGESTIONS },

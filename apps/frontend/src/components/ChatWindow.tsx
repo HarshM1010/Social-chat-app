@@ -63,16 +63,10 @@ export default function ChatWindow({ friendId, user, currentUserId }: ChatWindow
   useSubscription(LISTEN_FOR_MESSAGES, {
     variables: { roomId },
     skip: !roomId,
-    onData: ({ client, data }) => {
-    const newMessage = data?.data?.messageAdded; 
-
-    // Manually updating the cache for incoming messages too
-    client.cache.modify({
-      fields: {
-        getMessages(existingRef = {}) {}
-      }
-    });
-    
+    onData: ({ client }) => {
+    client.refetchQueries({
+      include: [GET_MESSAGES],
+    }); 
     setTimeout(scrollToBottom, 50);
   }
   });
@@ -161,7 +155,7 @@ export default function ChatWindow({ friendId, user, currentUserId }: ChatWindow
     skip: !roomId,
     onData: ({ client }) => {
       client.refetchQueries({
-        include: [GET_MESSAGES], // Identify the query to refetch
+        include: [GET_MESSAGES],
       });
     }
   });
@@ -175,7 +169,10 @@ export default function ChatWindow({ friendId, user, currentUserId }: ChatWindow
         toast.success('Removed friend and deleted chat history', { id: toastId });
       } catch (err) {
         console.error("Error forgetting friend", err);
-        const errorMessage = err.response?.data?.message || 'Something went wrong';
+        let errorMessage = "Something went wrong";
+        if (axios.isAxiosError(err)) {
+          errorMessage = err.response?.data?.message || errorMessage;
+        }
         toast.error(errorMessage, { id: toastId });
       } finally {
         setLoadingDelete(false);

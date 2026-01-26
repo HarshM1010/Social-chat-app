@@ -17,8 +17,8 @@ type MessageProps = {
     readBy?: ReadReceipt[];
   };
   isOwn: boolean;
-  senderName?: string; // For group chats (friend's name or username)
-  isActive: boolean;   // Is the menu currently open for this bubble?
+  senderName?: string;
+  isActive: boolean;
   onToggleMenu: (id: string) => void;
   onDelete: (id: string) => void;
 };

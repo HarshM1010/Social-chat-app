@@ -2,7 +2,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useLazyQuery, useSubscription } from '@apollo/client/react';
-import { GET_MESSAGES, GET_ALL_FRIENDS, SEARCH_USERS, GET_ADMINS_TO_REMOVE, GET_ALL_NON_ADMINS, GET_GROUP_MEMBERS, GET_ALL_ADMINS } from '@/graphql/queries';
+import { GET_MESSAGES, GET_ALL_FRIENDS, SEARCH_USERS, GET_ALL_NON_ADMINS, GET_GROUP_MEMBERS, GET_ALL_ADMINS } from '@/graphql/queries';
 import { SEND_MESSAGE, DELETE_MESSAGE, DELETE_GROUP, LEAVE_GROUP, ADD_MEMBER_TO_GROUP, REMOVE_GROUP_MEMBER, MAKE_GROUP_ADMIN, REMOVE_GROUP_ADMIN } from '@/graphql/mutations';
 import { LISTEN_FOR_ADDED_MEM_ROSTER_UPDATED, LISTEN_FOR_ADMIN_STATUS_CHANGED, LISTEN_FOR_DELETED_MESSAGE, LISTEN_FOR_MESSAGES, LISTEN_FOR_REMOVED_MEM_ROSTER_UPDATED } from '@/graphql/subscription'
 import Message from './Message';
@@ -10,6 +10,22 @@ import Modal from './ui/Modal'
 import toast, { Toaster } from 'react-hot-toast';
 import MessageBubble from './MessageBubble';
 import axios from 'axios';
+
+// Define the Message type for use in queries
+type MessageType = {
+  _id: string;
+  senderId: string;
+  content: string;
+  createdAt: string;
+  sender?: {
+    username?: string;
+  };
+  status: string;
+  readBy: {
+    userId: string;
+    readAt: string;
+  };
+};
 
 type GroupChatWindowProps = {
   roomId: string;
@@ -21,7 +37,7 @@ type GroupChatWindowProps = {
 type GetMessagesResponse = {
   getMessages: {
     roomId: string;
-    messages: Message[];
+    messages: MessageType[];
   };
 };
 
@@ -49,14 +65,13 @@ export default function GroupChatWindow({ roomId, user, group, currentUserId }: 
   const [loadingUpdate,setLoadingUpdate] = useState(false);
   
   // 1. Messages
-  const { data, loading, error } = useQuery<GetMessagesResponse>(GET_MESSAGES, {
+  const { data, loading } = useQuery<GetMessagesResponse>(GET_MESSAGES, {
     variables: { roomId, friendId:null },
   });
-  if(error) console.log(error);
-  console.log(data);
+
   // 2. Admins & Members (For permissions)
-  const { data: adminsData } = useQuery(GET_ALL_ADMINS, { variables: { groupId: roomId } });
-  const { data: membersData } = useQuery(GET_GROUP_MEMBERS, { variables: { groupId: roomId } });
+  const { data: adminsData } = useQuery<{ getAllAdmins: Array<{ userId: string; name: string; username: string }> }>(GET_ALL_ADMINS, { variables: { groupId: roomId } });
+  const { data: membersData } = useQuery<{ getGroupMembers: Array<{ userId: string; name: string; username: string }> }>(GET_GROUP_MEMBERS, { variables: { groupId: roomId } });
 
   // 3. Helper data for modals (queries)
   const { data: friendsData } = useQuery<GetAllFriendsResponse>(GET_ALL_FRIENDS);
@@ -110,16 +125,10 @@ export default function GroupChatWindow({ roomId, user, group, currentUserId }: 
   useSubscription(LISTEN_FOR_MESSAGES, {
     variables: { roomId },
     skip: !roomId,
-    onData: ({ client, data }) => {
-    const newMessage = data?.data?.messageAdded; 
-
-    // Manually updating the cache for incoming messages too
-    client.cache.modify({
-      fields: {
-        getMessages(existingRef = {}) {}
-      }
-    });
-    
+    onData: ({ client }) => {
+    client.refetchQueries({
+      include: [GET_MESSAGES],
+    });    
     setTimeout(scrollToBottom, 50);
   }
   });

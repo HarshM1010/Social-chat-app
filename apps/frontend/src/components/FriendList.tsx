@@ -19,13 +19,19 @@ type GetAllFriendsResponse = {
   getAllFriends: Array<{ userId: string; name: string; username: string; lastMessage?: string }>;
 };
 
+type FriendRemovedResponse = {
+  friendRemoved: {
+    removedUserId: string;
+  };
+};
+
 function FriendList({ onSelectChat, currentUser, onFriendRemoved }: FriendListProps) {
   const { data, loading, error } = useQuery<GetAllFriendsResponse>(GET_ALL_FRIENDS, {
     fetchPolicy: 'cache-and-network',
     nextFetchPolicy: 'cache-first',
   });
 
-  useSubscription(LISTEN_FOR_FRIEND_REMOVED, {
+  useSubscription<FriendRemovedResponse>(LISTEN_FOR_FRIEND_REMOVED, {
     variables: { userId: currentUser.userId },
     skip: !currentUser.userId,
     onData: ({ client, data }) => {

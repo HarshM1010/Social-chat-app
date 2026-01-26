@@ -10,6 +10,10 @@ import toast, { Toaster } from 'react-hot-toast';
 import { LISTEN_FOR_ACCEPTED_REQUEST, LISTEN_FOR_REJECTED_REQUEST } from '../graphql/subscription'
 import axios from 'axios';
 
+type GetAllRequestedResponse = {
+  getAllRequested: Array<{ userId: string; name: string; username: string }>;
+};
+
 type RequestedListProps = {
   currentUser?: {
     userId: string,
@@ -18,7 +22,7 @@ type RequestedListProps = {
 };
 
 export default function RequestedList({ currentUser }: RequestedListProps) {
-  const { data, loading, error } = useQuery(GET_ALL_REQUESTED, {
+  const { data, loading, error } = useQuery<GetAllRequestedResponse>(GET_ALL_REQUESTED, {
     fetchPolicy: 'cache-and-network',
     nextFetchPolicy: 'cache-first',
   });

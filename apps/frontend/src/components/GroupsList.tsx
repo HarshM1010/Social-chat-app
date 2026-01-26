@@ -6,8 +6,17 @@ import EmptyState from './EmptyState';
 import { LISTEN_FOR_ADDED_MEMBER, LISTEN_FOR_REMOVED_MEMBER } from '@/graphql/subscription';
 import { useState } from 'react';
 
+type GetAllGroupsResponse = {
+  getAllGroups: Array<{
+    id: string;
+    name: string;
+    admins: Array<{ userId: string; username: string }>;
+    members: Array<{ userId: string; username: string }>;
+  }>;
+};
+
 type GroupsListProps = {
-  onSelectChat: (groupId: string | null, group: any, isGroup: boolean) => void;
+  onSelectChat: (groupId: string, group: any, isGroup: boolean) => void;
   currentUser: {
     userId: string,
     username: string,
@@ -15,7 +24,7 @@ type GroupsListProps = {
 };
 
 export default function GroupsList({ onSelectChat, currentUser }: GroupsListProps) {
-  const { data, loading, error } = useQuery(GET_ALL_GROUPS);
+  const { data, loading, error } = useQuery<GetAllGroupsResponse>(GET_ALL_GROUPS);
   const [currGroupId,setCurrGroupId] = useState(null);
 
   useSubscription(LISTEN_FOR_ADDED_MEMBER, {
@@ -33,8 +42,8 @@ export default function GroupsList({ onSelectChat, currentUser }: GroupsListProp
   useSubscription(LISTEN_FOR_REMOVED_MEMBER, {
     variables: { userId: currentUser.userId },
     skip: !currentUser.userId,
-    onData: ({ client, data }) => {
-      const eventData = data.data.removedMemberReceived;
+    onData: ({ client, data }: any) => {
+      const eventData = data?.data?.removedMemberReceived;
       if (eventData.groupId === currGroupId) {
         onSelectChat(null, null, false);
       }
