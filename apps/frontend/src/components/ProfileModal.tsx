@@ -75,7 +75,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdatePreference
               </div>
               <div>
                 <div className="text-xl font-bold text-teal-700">{user?.friendsCount}</div>
-                <div className="text-xs text-teal-600 font-medium">{user?.friendsCount > 1 ? "Friends" : "Friend"}</div>
+                <div className="text-xs text-teal-600 font-medium">{user?.friendsCount === 1 ? "Friend" : "Friends"}</div>
               </div>
             </div>
             <div className="bg-teal-50 p-3 rounded-xl flex items-center gap-3 border border-teal-100">
@@ -84,7 +84,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdatePreference
               </div>
               <div>
                 <div className="text-xl font-bold text-teal-700">{user?.groupsCount}</div>
-                <div className="text-xs text-teal-600 font-medium">{user?.groupsCount > 1 ? "Groups" : "Group"}</div>
+                <div className="text-xs text-teal-600 font-medium">{user?.groupsCount === 1 ? "Group" : "Groups"}</div>
               </div>
             </div>
           </div>
