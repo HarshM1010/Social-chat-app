@@ -1,0 +1,12 @@
+# Ignore the heavy dependencies folder
+node_modules/
+# Ignore build outputs
+dist/
+build/
+.next/
+.nest/
+
+# Ignore system files
+.DS_Store
+.env
+.env.local

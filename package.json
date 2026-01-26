@@ -1,0 +1,14 @@
+{
+  "name": "chat_app",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=frontend & npm run start:dev --workspace=backend"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0"
+  }
+}
