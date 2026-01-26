@@ -51,6 +51,15 @@ type GetAllFriendsResponse = {
 
 type ModalType = 'none' | 'viewAdmins' | 'addMember' | 'removeMember' | 'addAdmin' | 'removeAdmin';
 
+type SearchUsersResponse = {
+  searchUsers: Array<{
+    userId: string;
+    name: string;
+    username: string;
+    requestStatus: 'FRIEND' | 'SENT' | 'RECEIVED' | 'NONE';
+  }>;
+};
+
 export default function GroupChatWindow({ roomId, user, group, currentUserId }: GroupChatWindowProps) {
   const [text, setText] = useState('');
   const [showGroupInfo, setShowGroupInfo] = useState(false);
@@ -77,7 +86,7 @@ export default function GroupChatWindow({ roomId, user, group, currentUserId }: 
   const { data: friendsData } = useQuery<GetAllFriendsResponse>(GET_ALL_FRIENDS);
   const { data: allNonAdmins } = useQuery<GetAllNonAdminsResponse>(GET_ALL_NON_ADMINS, { variables: { groupId: roomId } });
   
-  const [searchUsers, { data:searchData, loading: searchLoading }] = useLazyQuery(SEARCH_USERS, {
+  const [searchUsers, { data:searchData, loading: searchLoading }] = useLazyQuery<SearchUsersResponse>(SEARCH_USERS, {
     fetchPolicy: 'network-only',
   });
 
