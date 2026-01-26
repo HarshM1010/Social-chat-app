@@ -20,7 +20,7 @@ type ProfileSectionProps = {
     friendsCount: number;
     groupsCount: number;
     preference: string | null;
-  };
+  } | null;
 };
 
 export default function ProfileSection({ user }: ProfileSectionProps) {

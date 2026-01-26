@@ -1,6 +1,6 @@
 // src/app/home/page.tsx
 'use client';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useQuery } from '@apollo/client/react'; // Import useQuery
 import { GET_CURRENT_USER } from '@/graphql/queries'; // Import the query
 import Sidebar from '@/components/Sidebar';
@@ -83,7 +83,7 @@ export default function HomePage() {
             </div>
           )}
         </main>
-        <ProfileSection user={data?.getCurrentUser} />
+        <ProfileSection user={data?.getCurrentUser || null} />
       </div>
   );
 }
