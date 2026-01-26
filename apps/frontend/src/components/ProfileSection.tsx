@@ -9,6 +9,7 @@ import { useMutation, useApolloClient } from '@apollo/client/react';
 import { SUBMIT_ANSWER } from '@/graphql/mutations';
 import { toast } from 'react-hot-toast';
 import { GET_CURRENT_USER } from '@/graphql/queries';
+import axios from 'axios';
 
 type ProfileSectionProps = {
   user: {
@@ -48,7 +49,10 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
       toast.success('Preference updated successfully', { id: toastId });
     } catch (err) {
       console.error('Error updating preference:', err);
-      const errorMessage = err.response?.data?.message || 'Something went wrong';
+      let errorMessage = "Something went wrong";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message || errorMessage;
+      }
       toast.error(errorMessage, { id: toastId });
     } finally {
       setLoading(false);
@@ -70,7 +74,10 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
       }, 100);
     } catch (err) {
       console.error('Logout error:', err);
-      const errorMessage = err.response?.data?.message || 'Something went wrong';
+      let errorMessage = "Something went wrong";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message || errorMessage;
+      }
       toast.error(errorMessage, { id: toastId });
     } finally {
       setLoading(false);

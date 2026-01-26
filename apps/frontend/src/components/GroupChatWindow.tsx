@@ -9,6 +9,7 @@ import Message from './Message';
 import Modal from './ui/Modal'
 import toast, { Toaster } from 'react-hot-toast';
 import MessageBubble from './MessageBubble';
+import axios from 'axios';
 
 type GroupChatWindowProps = {
   roomId: string;
@@ -215,7 +216,10 @@ export default function GroupChatWindow({ roomId, user, group, currentUserId }: 
       toast.success('Msg deleted successfully!', { id: toastId });
     } catch (err) {
       console.error('Error deleting message:', err);
-      const errorMessage = err.response?.data?.message || 'Something went wrong';
+      let errorMessage = "Something went wrong";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message || errorMessage;
+      }
       toast.error(errorMessage, { id: toastId });
     } finally {
       setLoadingUpdate(false);
@@ -233,7 +237,10 @@ export default function GroupChatWindow({ roomId, user, group, currentUserId }: 
       toast.success('Member added successfully!', { id: toastId });
     } catch (err) {
       console.error('Error adding member:', err);
-      const errorMessage = err.response?.data?.message || 'Something went wrong';
+      let errorMessage = "Something went wrong";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message || errorMessage;
+      }
       toast.error(errorMessage, { id: toastId });
     } finally {
       setLoadingUpdate(false);
@@ -248,7 +255,10 @@ export default function GroupChatWindow({ roomId, user, group, currentUserId }: 
       toast.success('Member removed successfully!', { id: toastId });
     } catch (err) {
       console.error('Error removing member:', err);
-      const errorMessage = err.response?.data?.message || 'Something went wrong';
+      let errorMessage = "Something went wrong";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message || errorMessage;
+      }
       toast.error(errorMessage, { id: toastId });
     } finally {
       setLoadingUpdate(false);
@@ -263,7 +273,10 @@ export default function GroupChatWindow({ roomId, user, group, currentUserId }: 
       toast.success('Status updated successfully!', { id: toastId });
     } catch (err) {
       console.error('Error updating status:', err);
-      const errorMessage = err.response?.data?.message || 'Something went wrong';
+      let errorMessage = "Something went wrong";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message || errorMessage;
+      }
       toast.error(errorMessage, { id: toastId });
     } finally {
       setLoadingUpdate(false);
@@ -278,7 +291,10 @@ export default function GroupChatWindow({ roomId, user, group, currentUserId }: 
       toast.success('Status updated successfully!', { id: toastId });
     } catch (err) {
       console.error('Error updating status:', err);
-      const errorMessage = err.response?.data?.message || 'Something went wrong';
+      let errorMessage = "Something went wrong";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message || errorMessage;
+      }
       toast.error(errorMessage, { id: toastId });
     } finally {
       setLoadingUpdate(false);

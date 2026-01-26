@@ -29,7 +29,6 @@ function FriendList({ onSelectChat, currentUser, onFriendRemoved }: FriendListPr
     variables: { userId: currentUser.userId },
     skip: !currentUser.userId,
     onData: ({ client, data }) => {
-      // console.log("🔥 Deletion of private chat event received!");
       const removedFriendId = data?.data?.friendRemoved?.removedUserId;
       if(removedFriendId) {
         onFriendRemoved(removedFriendId);

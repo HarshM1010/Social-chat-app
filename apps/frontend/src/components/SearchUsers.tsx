@@ -5,6 +5,7 @@ import { useLazyQuery, useMutation } from '@apollo/client/react';
 import { GET_ALL_FRIENDS, GET_ALL_REQUESTED, GET_ALL_REQUESTS, GET_SUGGESTIONS, SEARCH_USERS } from '@/graphql/queries';
 import { SEND_FRIEND_REQUEST, CANCEL_FRIEND_REQUEST, FORGET_FRIEND, ACCEPT_FRIEND_REQUEST, REJECT_FRIEND_REQUEST } from '@/graphql/mutations';
 import toast, { Toaster } from 'react-hot-toast';
+import axios from 'axios';
 
 export default function SearchUsers() {
   const [query, setQuery] = useState('');
@@ -75,7 +76,10 @@ export default function SearchUsers() {
       refreshSearch();
     } catch (err) {
       console.error('Error sending request:', err);
-      const errorMessage = err.response?.data?.message || 'Something went wrong';
+      let errorMessage = "Something went wrong";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message || errorMessage;
+      }
       toast.error(errorMessage, { id: toastId });
     } finally {
       setLoading(false);
@@ -105,7 +109,10 @@ export default function SearchUsers() {
       refreshSearch();
     } catch (err) {
       console.error('Error rejecting request:', err);
-      const errorMessage = err.response?.data?.message || 'Something went wrong';
+      let errorMessage = "Something went wrong";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message || errorMessage;
+      }
       toast.error(errorMessage, { id: toastId });
     } finally {
       setLoading(false);
@@ -121,7 +128,10 @@ export default function SearchUsers() {
       refreshSearch();
     } catch (err) {
       console.error('Error canceling request:', err);
-      const errorMessage = err.response?.data?.message || 'Something went wrong';
+      let errorMessage = "Something went wrong";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message || errorMessage;
+      }
       toast.error(errorMessage, { id: toastId });
     } finally {
       setLoading(false);
@@ -138,7 +148,10 @@ export default function SearchUsers() {
         refreshSearch();
       } catch (err) {
         console.error("Error forgetting friend", err);
-        const errorMessage = err.response?.data?.message || 'Something went wrong';
+        let errorMessage = "Something went wrong";
+        if (axios.isAxiosError(err)) {
+          errorMessage = err.response?.data?.message || errorMessage;
+        }
         toast.error(errorMessage, { id: toastId });
       } finally {
         setLoading(false);

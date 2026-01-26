@@ -1,43 +1,5 @@
 'use client';
 
-import { useQuery } from '@apollo/client';
-import { GET_FRIENDS } from '@/graphql/queries';
-import EmptyState from './EmptyState';
-import UserListItem from './UserListItem';
-
-type FriendListProps = {
-  onSelectChat: (userId: string, user: any) => void;
-};
-
-export default function FriendList({ onSelectChat }: FriendListProps) {
-  const { data, loading, error } = useQuery(GET_FRIENDS);
-
-  if (loading) return <div className="p-4 text-center text-slate-500">Loading...</div>;
-  if (error) return <div className="p-4 text-center text-red-500">Error loading friends</div>;
-
-  const friends = data?.getFriends || [];
-
-  if (friends.length === 0) {
-    return <EmptyState icon="👥" message="No friends yet" subMessage="Search for users to start chatting" />;
-  }
-
-  return (
-    <div>
-      {friends.map((friend: any) => (
-        <UserListItem
-          key={friend.id}
-          user={friend}
-          onClick={() => onSelectChat(friend.id, friend)}
-          showLastMessage={true}
-        />
-      ))}
-    </div>
-  );
-}
-
-// src/components/UserListItem.tsx
-'use client';
-
 type UserListItemProps = {
   user: {
     id: string;

@@ -7,6 +7,7 @@ import { SEND_MESSAGE, FORGET_FRIEND, DELETE_MESSAGE } from '@/graphql/mutations
 import { LISTEN_FOR_MESSAGES, LISTEN_FOR_DELETED_MESSAGE } from '../graphql/subscription'
 import MessageBubble from './MessageBubble';
 import toast, { Toaster } from 'react-hot-toast';
+import axios from 'axios';
 
 // Define the shape of a Read Receipt
 type ReadReceipt = {
@@ -145,7 +146,10 @@ export default function ChatWindow({ friendId, user, currentUserId }: ChatWindow
       toast.success('Msg deleted successfully!', { id: toastId });
     } catch (err) {
       console.error('Error deleting message:', err);
-      const errorMessage = err.response?.data?.message || 'Something went wrong';
+      let errorMessage = "Something went wrong";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message || errorMessage;
+      }
       toast.error(errorMessage, { id: toastId });
     } finally {
       setLoadingDelete(false);

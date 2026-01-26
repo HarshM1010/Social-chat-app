@@ -6,6 +6,7 @@ import { GET_ALL_REQUESTED } from '@/graphql/queries';
 import { SEND_FRIEND_REQUEST } from '@/graphql/mutations';
 import toast, { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
+import axios from 'axios';
 
 export default function SuggestionsList() {
   const [loadingSendFr,setLoadingSendFr] = useState(false);
@@ -42,7 +43,10 @@ export default function SuggestionsList() {
       toast.success('Request Sent successfully', { id: toastId });
     } catch (err) {
       console.error('Error sending request:', err);
-      const errorMessage = err.response?.data?.message || 'Something went wrong';
+      let errorMessage = "Something went wrong";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message || errorMessage;
+      }
       toast.error(errorMessage, { id: toastId });
     } finally {
       setLoadingSendFr(false);

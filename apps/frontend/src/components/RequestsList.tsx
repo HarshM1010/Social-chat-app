@@ -7,6 +7,7 @@ import {ACCEPT_FRIEND_REQUEST, REJECT_FRIEND_REQUEST} from '@/graphql/mutations'
 import EmptyState from './EmptyState';
 import { LISTEN_FOR_SENT_REQUEST, LISTEN_FOR_CANCELLED_REQUEST } from '@/graphql/subscription';
 import toast, { Toaster } from 'react-hot-toast';
+import axios from 'axios';
 
 type RequestsListProps = {
   currentUser: {
@@ -88,7 +89,10 @@ export default function RequestsList({ currentUser }: RequestsListProps) {
       toast.success('Request rejected successfully', { id: toastId });
     } catch (err) {
       console.error('Error rejecting request:', err);
-      const errorMessage = err.response?.data?.message || 'Something went wrong';
+      let errorMessage = "Something went wrong";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message || errorMessage;
+      }
       toast.error(errorMessage, { id: toastId });
     } finally {
       setLoadingRequest(false);

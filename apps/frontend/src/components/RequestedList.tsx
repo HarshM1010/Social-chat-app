@@ -8,6 +8,7 @@ import EmptyState from './EmptyState';
 import { GET_SUGGESTIONS } from '@/graphql/queries';
 import toast, { Toaster } from 'react-hot-toast';
 import { LISTEN_FOR_ACCEPTED_REQUEST, LISTEN_FOR_REJECTED_REQUEST } from '../graphql/subscription'
+import axios from 'axios';
 
 type RequestedListProps = {
   currentUser?: {
@@ -71,7 +72,10 @@ export default function RequestedList({ currentUser }: RequestedListProps) {
       toast.success('Request deleted successfully', { id: toastId });
     } catch (err) {
       console.error('Error canceling request:', err);
-      const errorMessage = err.response?.data?.message || 'Something went wrong';
+      let errorMessage = "Something went wrong";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message || errorMessage;
+      }
       toast.error(errorMessage, { id: toastId });
     } finally {
       setLoadingSent(false);

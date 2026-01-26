@@ -30,7 +30,10 @@ export default function LoginPage() {
       }, 500);
     } catch(err) {
       console.error('Login error:', err);
-      const errorMessage = err.response?.data?.message || 'Something went wrong';
+      let errorMessage = "Something went wrong";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message || errorMessage;
+      }
       toast.error(errorMessage, { id: toastId });
     } finally {
       setLoading(false);
