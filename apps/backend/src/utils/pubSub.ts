@@ -5,6 +5,7 @@ import Redis from 'ioredis';
 const options = {
   host: process.env.REDIS_HOST || 'localhost',
   port: parseInt(process.env.REDIS_PORT || '6379', 10),
+  password: process.env.REDIS_PASSWORD,
   retryStrategy: (times) => {
     // Retry connection every 2 seconds if it fails
     return Math.min(times * 50, 2000);

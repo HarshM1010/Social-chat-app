@@ -29,7 +29,7 @@ import { UserModule } from './users/user.module';
       imports: [Neo4jModule, ChatModule],
       driver: ApolloDriver,
       inject: ['NEO4J_DRIVER'],
-      useFactory: async (driver) => {
+      useFactory: (driver) => {
         return {
           autoSchemaFile: true,
           transformSchema: async (nestSchema) => {
