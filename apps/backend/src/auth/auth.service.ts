@@ -6,11 +6,10 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import { Driver } from 'neo4j-driver';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
-import { Message } from 'src/chat/schemas/message.schema';
 import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
