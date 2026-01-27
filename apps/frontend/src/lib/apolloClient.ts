@@ -12,24 +12,28 @@ const httpLink = new HttpLink({
 
 const wsUrl = BACKEND_URL.replace(/^http/, 'ws') + '/graphql';
 
-const wsLink = new GraphQLWsLink(
-  createClient({
-    url: wsUrl,
-  })
-);
+const wsLink = typeof window !== 'undefined'
+  ? new GraphQLWsLink(
+      createClient({
+        url: wsUrl,
+      })
+    )
+  : null;
 
 // Split based on operation type
-const splitLink = split(
-  ({ query }) => {
-    const definition = getMainDefinition(query);
-    return (
-      definition.kind === 'OperationDefinition' &&
-      definition.operation === 'subscription'
-    );
-  },
-  wsLink,
-  httpLink
-);
+const splitLink = typeof window !== 'undefined' && wsLink
+  ? split(
+      ({ query }) => {
+        const definition = getMainDefinition(query);
+        return (
+          definition.kind === 'OperationDefinition' &&
+          definition.operation === 'subscription'
+        );
+      },
+      wsLink,
+      httpLink
+    )
+  : httpLink;
 
 export const apolloClient = new ApolloClient({
   link: splitLink,
