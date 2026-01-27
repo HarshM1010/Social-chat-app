@@ -25,6 +25,8 @@ type ProfileSectionProps = {
 
 export default function ProfileSection({ user }: ProfileSectionProps) {
   const [activeTab, setActiveTab] = useState<'search' | 'suggestions'>('search');
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
   const [updatePreference] = useMutation(SUBMIT_ANSWER, {
     refetchQueries: [
       { query: GET_CURRENT_USER } 
@@ -63,7 +65,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
     setLoading(true);
     const toastId = toast.loading('Logging out...');
     try {
-      await fetch('http://localhost:3001/auth/logout', {
+      await fetch(`${BACKEND_URL}/auth/logout`, {
         method: 'POST',
         credentials: 'include',
       });
