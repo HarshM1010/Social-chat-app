@@ -26,10 +26,13 @@ export default function HomePage() {
 
   // 1. Fetch Current User ID
   // If your backend doesn't have 'me', we can decode the token from localStorage here instead.
-  const { data, loading } = useQuery<CurrentUserIdResponse>(GET_CURRENT_USER);
+  const { data, loading, error } = useQuery<CurrentUserIdResponse>(GET_CURRENT_USER);
   // useEffect(() => {
   //   console.log("HomePage Render:", { loading, data, error });
   // }, [loading, data, error]);
+  if(error) {
+    console.error("Error fetching current user:", error);
+  }
   const currentUserId = data?.getCurrentUser?.userId || ''; 
   const currentUsername = data?.getCurrentUser?.username || '';
   const handleSelectChat = useCallback((userId: string | null, user: any, isGroupChat = false) => {
