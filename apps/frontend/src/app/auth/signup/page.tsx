@@ -17,6 +17,8 @@ export default function SignupPage() {
 
   const signup = async () => {
 
+    const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
     if (!form.name || !form.username || !form.email || !form.password) {
       toast.error('Please fill in all fields');
       return;
@@ -24,7 +26,7 @@ export default function SignupPage() {
     setLoading(true);
     const toastId = toast.loading('Creating your account...');
     try{
-      const response = await axios.post('http://localhost:3001/auth/signup', form, {
+      const response = await axios.post(`${BACKEND_URL}/auth/signup`, form, {
         withCredentials: true,
       });
       console.log(response);

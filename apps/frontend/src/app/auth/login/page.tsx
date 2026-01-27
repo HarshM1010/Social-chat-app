@@ -13,6 +13,8 @@ export default function LoginPage() {
 
   const login = async () => {
 
+    const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
     if (!identifier || !password) {
       toast.error('Please fill in all fields');
       return;
@@ -20,7 +22,7 @@ export default function LoginPage() {
     setLoading(true);
     const toastId = toast.loading('Logging in...');
     try{
-      const response = await axios.post('http://localhost:3001/auth/login', { identifier, password }, {
+      const response = await axios.post(`${BACKEND_URL}/auth/login`, { identifier, password }, {
         withCredentials: true,
       });
       console.log(response);
