@@ -9,8 +9,8 @@ async function bootstrap() {
   app.use(cookieParser());
   app.enableCors({
     origin: [
-      'http://localhost:3000',
       'https://social-chat-application.vercel.app',
+      'http://localhost:3000',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
