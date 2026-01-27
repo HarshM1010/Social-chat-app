@@ -8,7 +8,8 @@ import axios from 'axios';
 export default function ChangePasswordPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
   const [passwords, setPasswords] = useState({
     current: '',
     new: '',
@@ -49,7 +50,7 @@ export default function ChangePasswordPage() {
     const toastId = toast.loading('Updating password...');
 
     try {
-      await axios.post('http://localhost:3001/auth/change-password', 
+      await axios.post(`${BACKEND_URL}/auth/change-password`, 
         { 
           currentPassword: passwords.current,
           newPassword: passwords.new 
