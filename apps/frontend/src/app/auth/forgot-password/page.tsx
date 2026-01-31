@@ -10,7 +10,6 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [linkSent, setLinkSent] = useState(false);
-  
   const [timer, setTimer] = useState(0);
   const canResend = timer === 0;
 
@@ -26,7 +25,6 @@ export default function ForgotPasswordPage() {
 
   const handleSubmit = async () => {
     const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-
     if (!email) {
       toast.error('Please enter your email');
       return;
