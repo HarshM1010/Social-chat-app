@@ -1,69 +1,67 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 
-export default function ChangePasswordPage() {
+// 1. The Form Component
+function ResetPasswordForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
   const [loading, setLoading] = useState(false);
-  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   const [passwords, setPasswords] = useState({
-    current: '',
     new: '',
     confirm: ''
   });
 
   const [showPassword, setShowPassword] = useState({
-    current: false,
     new: false,
     confirm: false
   });
 
-  const handleChange = (field: 'current' | 'new' | 'confirm', value: string) => {
-    setPasswords(prev => ({ ...prev, [field]: value }));
-  };
-
-  const toggleVisibility = (field: 'current' | 'new' | 'confirm') => {
+  const toggleVisibility = (field:'new' | 'confirm') => {
     setShowPassword(prev => ({ ...prev, [field]: !prev[field] }));
   };
 
+  const handleChange = (field:'new' | 'confirm', value: string) => {
+    setPasswords(prev => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = async () => {
-    if (!passwords.current || !passwords.new || !passwords.confirm) {
+    const BACKEND_URL = 'http://localhost:3001';
+
+    if (!token) {
+      toast.error('Invalid link. Please request a new one.');
+      return;
+    }
+    if (!passwords.new || !passwords.confirm) {
       toast.error('Please fill in all fields');
       return;
     }
-    
     if (passwords.new !== passwords.confirm) {
-      toast.error('New passwords do not match');
-      return;
-    }
-
-    if (passwords.new.length < 6) {
-      toast.error('Password must be at least 6 characters');
+      toast.error('Passwords do not match');
       return;
     }
 
     setLoading(true);
-    const toastId = toast.loading('Updating password...');
-
+    const toastId = toast.loading('Resetting password...');
+    console.log('Submitting new password with token:', token);
     try {
-      await axios.post(`${BACKEND_URL}/auth/change-password`, 
-        { 
-          currentPassword: passwords.current,
-          newPassword: passwords.new 
-        }, 
-        { withCredentials: true }
-      );
+      const response = await axios.post(`${BACKEND_URL}/reset-password`, {
+        token: token,
+        newPassword: passwords.new
+      });
+      console.log(response);
       toast.success('Password changed successfully!', { id: toastId });
       setTimeout(() => {
-        router.push('/home');
-      }, 200);
+        router.push('/auth/login');
+      }, 2000);
 
-    } catch (err: any) {
-      console.error('Change password error:', err);
+    } catch (err) {
+      console.error(err);
       let errorMessage = "Something went wrong";
       if (axios.isAxiosError(err)) {
         errorMessage = err.response?.data?.message || errorMessage;
@@ -74,9 +72,25 @@ export default function ChangePasswordPage() {
     }
   };
 
-  // Reusable Input Component with Eye Icon
+  if (!token) {
+    return (
+      <div className="text-center text-red-500 bg-red-50 p-4 rounded-xl border border-red-100">
+        <p className="font-medium">Invalid or Missing Token</p>
+        <p className="text-sm mt-1">Please request a new reset link.</p>
+        <button 
+          onClick={() => router.push('/auth/forgot-password')}
+          className="text-sm text-red-600 underline mt-2 hover:text-red-800 cursor-pointer"
+        >
+          Go back
+        </button>
+      </div>
+    );
+  }
+
+  
+
   const renderPasswordInput = (
-    field: 'current' | 'new' | 'confirm', 
+    field:'new' | 'confirm', 
     placeholder: string
   ) => (
     <div className="relative mb-4">
@@ -110,53 +124,51 @@ export default function ChangePasswordPage() {
   );
 
   return (
+    <div className="space-y-4">
+      <label className="text-xs font-semibold text-slate-500 uppercase ml-1">New Password</label>
+        {renderPasswordInput('new', 'Enter new password')}
+
+      <label className="text-xs font-semibold text-slate-500 uppercase ml-1">Confirm Password</label>
+        {renderPasswordInput('confirm', 'Confirm new password')}
+
+      <button
+        onClick={handleSubmit}
+        disabled={loading}
+        className={`w-full py-3 rounded-xl font-medium text-white shadow-sm transition-all cursor-pointer
+          ${loading 
+            ? 'bg-teal-300 cursor-not-allowed' 
+            : 'bg-teal-500 hover:bg-teal-600 hover:shadow-md'
+          }`}
+      >
+        {loading ? 'Updating Password...' : 'Reset Password'}
+      </button>
+    </div>
+  );
+}
+
+// 2. The Page Wrapper (Handles Suspense)
+export default function ResetPasswordPage() {
+  return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-cyan-50 to-teal-50">
-      <Toaster position="top-right" reverseOrder={false} />
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-sm border border-teal-100 animate-in fade-in zoom-in duration-300">
+      <Toaster position="top-right" />
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-sm border border-teal-100">
         
-        {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-teal-500 rounded-full mx-auto mb-3 flex items-center justify-center shadow-md">
-            {/* Lock Icon */}
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-12 h-12 bg-teal-100 rounded-full mx-auto mb-3 flex items-center justify-center">
+            <svg className="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-light text-slate-800 font-mono">Change Password</h2>
+          <h2 className="text-2xl font-semibold text-slate-800">Set New Password</h2>
           <p className="text-sm text-slate-500 mt-2">
-            Secure your account with a new password
+            Please enter your new password below.
           </p>
         </div>
 
-        {/* Form Inputs */}
-        <div className="space-y-1">
-          <label className="text-xs font-semibold text-slate-500 uppercase ml-1">Current Password</label>
-          {renderPasswordInput('current', 'Enter current password')}
-          
-          <label className="text-xs font-semibold text-slate-500 uppercase ml-1">New Password</label>
-          {renderPasswordInput('new', 'Enter new password')}
-
-          <label className="text-xs font-semibold text-slate-500 uppercase ml-1">Confirm Password</label>
-          {renderPasswordInput('confirm', 'Confirm new password')}
-        </div>
-
-        {/* Actions */}
-        <div className="mt-6 space-y-3">
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="w-full bg-teal-500 text-white py-3 rounded-xl hover:bg-teal-600 transition font-medium shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Update Password
-          </button>
-          
-          <button
-            onClick={() => router.back()}
-            className="w-full bg-white text-slate-500 py-3 rounded-xl border border-slate-200 hover:bg-slate-50 transition font-medium cursor-pointer"
-          >
-            Cancel
-          </button>
-        </div>
+        {/* Suspense is required when using useSearchParams in Next.js App Router */}
+        <Suspense fallback={<div className="text-center text-teal-600">Loading...</div>}>
+          <ResetPasswordForm />
+        </Suspense>
 
       </div>
     </div>

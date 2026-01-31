@@ -21,7 +21,7 @@ export class EmailService {
     const mailOptions = {
       from: `"Support Team @Social-Chat-app" <${process.env.MAIL_USER}>`,
       to: to,
-      subject: 'Link to Reset Your Password',
+      subject: 'Reset Your Password',
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
           <h2 style="color: #0d9488;">Password Reset Request</h2>

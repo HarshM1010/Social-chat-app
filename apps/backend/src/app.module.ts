@@ -12,6 +12,13 @@ import { Neo4jModule } from './config/neo4j.module';
 import { mergeSchemas } from '@graphql-tools/schema';
 import { RequestModule } from './request/request.module';
 import { UserModule } from './users/user.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import {
+  ResetToken,
+  ResetTokenSchema,
+} from './chat/schemas/reset-token.schema';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
@@ -20,6 +27,9 @@ import { UserModule } from './users/user.module';
       envFilePath: '.env',
     }),
     mongoConfig,
+    MongooseModule.forFeature([
+      { name: ResetToken.name, schema: ResetTokenSchema },
+    ]),
     Neo4jModule,
     AuthModule,
     ChatModule,
@@ -106,6 +116,7 @@ import { UserModule } from './users/user.module';
       },
     }),
   ],
-  providers: [neo4jProvider],
+  controllers: [AppController],
+  providers: [neo4jProvider, AppService],
 })
 export class AppModule {}
