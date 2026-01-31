@@ -5,6 +5,7 @@ import { LoginDto } from './dto/login.dto';
 import express from 'express';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { RestAuthGuard } from './rest-auth.guard';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -66,5 +67,13 @@ export class AuthController {
     return res.status(200).json({
       message: 'Password updated successfully',
     });
+  }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() body: ForgotPasswordDto) {
+    await this.authService.forgotPassword(body);
+    return {
+      message: 'If that email is registered, a reset link has been sent.',
+    };
   }
 }

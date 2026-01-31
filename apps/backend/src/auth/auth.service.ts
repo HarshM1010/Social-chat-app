@@ -11,11 +11,23 @@ import { Driver } from 'neo4j-driver';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { v4 as uuidv4 } from 'uuid';
+import {
+  ResetToken,
+  ResetTokenDocument,
+} from '../chat/schemas/reset-token.schema';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { EmailService } from './email.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
+    private readonly emailService: EmailService,
+    @InjectModel(ResetToken.name)
+    private readonly resetTokenModel: Model<ResetTokenDocument>,
     @Inject('NEO4J_DRIVER') private readonly neo4jDriver: Driver,
   ) {}
 
@@ -147,5 +159,37 @@ export class AuthService {
     } finally {
       await session.close();
     }
+  }
+
+  async forgotPassword(dto: ForgotPasswordDto) {
+    if (!dto.email) {
+      throw new BadRequestException('Email is required');
+    }
+    const session = this.neo4jDriver.session();
+    let userId: string;
+    try {
+      const result = await session.run(
+        `
+        MATCH (u:User {email: $email})
+        RETURN u.userId AS userId
+        `,
+        { email: dto.email.toLowerCase() },
+      );
+      if (!result.records.length) {
+        return;
+      }
+      userId = result.records[0]?.get('userId');
+    } finally {
+      await session.close();
+    }
+    const token = uuidv4();
+    await this.resetTokenModel.create({
+      token,
+      userId: userId,
+    });
+    const Url = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const resetLink = `${Url}/reset-password?token=${token}`;
+    await this.emailService.sendResetPasswordEmail(dto.email, resetLink);
+    return { message: 'Reset Password link sent to your email.' };
   }
 }

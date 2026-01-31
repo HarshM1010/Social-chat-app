@@ -8,7 +8,7 @@ import ProfileModal from './ProfileModal';
 import { useMutation, useApolloClient } from '@apollo/client/react';
 import { SUBMIT_ANSWER } from '@/graphql/mutations';
 import { toast } from 'react-hot-toast';
-import { GET_CURRENT_USER } from '@/graphql/queries';
+import { GET_CURRENT_USER, GET_SUGGESTIONS } from '@/graphql/queries';
 import axios from 'axios';
 
 type ProfileSectionProps = {
@@ -29,7 +29,8 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
 
   const [updatePreference] = useMutation(SUBMIT_ANSWER, {
     refetchQueries: [
-      { query: GET_CURRENT_USER } 
+      { query: GET_CURRENT_USER },
+      { query: GET_SUGGESTIONS }
     ],
     awaitRefetchQueries: true,
   });

@@ -24,12 +24,10 @@ export default function HomePage() {
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [isGroup, setIsGroup] = useState(false);
 
-  // 1. Fetch Current User ID
-  // If your backend doesn't have 'me', we can decode the token from localStorage here instead.
-  const { data, loading, error } = useQuery<CurrentUserIdResponse>(GET_CURRENT_USER);
-  // useEffect(() => {
-  //   console.log("HomePage Render:", { loading, data, error });
-  // }, [loading, data, error]);
+  const { data, loading, error } = useQuery<CurrentUserIdResponse>(GET_CURRENT_USER, {
+    fetchPolicy: 'network-only',
+    nextFetchPolicy: 'cache-first',
+  });
   if(error) {
     console.error("Error fetching current user:", error);
   }

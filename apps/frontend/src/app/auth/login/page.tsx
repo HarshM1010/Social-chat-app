@@ -7,12 +7,11 @@ import axios from 'axios';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
 
   const login = async () => {
-
     const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
     if (!identifier || !password) {
@@ -21,7 +20,7 @@ export default function LoginPage() {
     }
     setLoading(true);
     const toastId = toast.loading('Logging in...');
-    try{
+    try {
       const response = await axios.post(`${BACKEND_URL}/auth/login`, { identifier, password }, {
         withCredentials: true,
       });
@@ -30,7 +29,7 @@ export default function LoginPage() {
       setTimeout(() => {
         router.push('/home');
       }, 500);
-    } catch(err) {
+    } catch (err) {
       console.error('Login error:', err);
       let errorMessage = "Something went wrong";
       if (axios.isAxiosError(err)) {
@@ -42,7 +41,15 @@ export default function LoginPage() {
     }
   };
 
- return (
+  const handleSignup = () => {
+    router.push('/auth/signup');
+  };
+
+  const handleForgotPassword = () => {
+    router.push('/auth/forgot-password');
+  };
+
+  return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-cyan-50 to-teal-50">
       <Toaster position="top-right" reverseOrder={false} />
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-sm border border-teal-100">
@@ -59,21 +66,50 @@ export default function LoginPage() {
         <input
           className="w-full mb-4 px-4 py-3 border border-teal-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition bg-teal-50/30 placeholder:text-slate-400 text-slate-700"
           placeholder="Email or Username"
+          value={identifier}
           onChange={(e) => setIdentifier(e.target.value)}
         />
 
         <input
           type="password"
-          className="w-full mb-6 px-4 py-3 border border-teal-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition bg-teal-50/30 placeholder:text-slate-400 text-slate-700"
+          className="w-full mb-2 px-4 py-3 border border-teal-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition bg-teal-50/30 placeholder:text-slate-400 text-slate-700"
           placeholder="Password"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && login()}
         />
+
+        <div className="flex justify-end mb-6">
+          <button
+            onClick={handleForgotPassword}
+            className="text-sm text-teal-600 hover:text-teal-700 font-medium transition cursor-pointer hover:underline"
+          >
+            Forgot Password?
+          </button>
+        </div>
 
         <button
           onClick={login}
-          className="w-full bg-teal-500 text-white py-3 rounded-xl hover:bg-teal-600 transition font-medium shadow-sm cursor-pointer"
+          disabled={loading}
+          className="w-full bg-teal-500 text-white py-3 rounded-xl hover:bg-teal-600 transition font-medium shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Sign in
+          {loading ? 'Signing in...' : 'Sign in'}
+        </button>
+
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-4 bg-white text-slate-500 font-medium">Or</span>
+          </div>
+        </div>
+
+        <button
+          onClick={handleSignup}
+          className="w-full bg-white border border-teal-200 text-teal-600 py-3 rounded-xl hover:bg-teal-50 hover:border-teal-300 transition font-medium shadow-sm cursor-pointer"
+        >
+          Create Account
         </button>
       </div>
     </div>

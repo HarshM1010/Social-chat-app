@@ -16,7 +16,6 @@ export default function SignupPage() {
   });
 
   const signup = async () => {
-
     const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
     if (!form.name || !form.username || !form.email || !form.password) {
@@ -25,16 +24,17 @@ export default function SignupPage() {
     }
     setLoading(true);
     const toastId = toast.loading('Creating your account...');
-    try{
+    try {
       const response = await axios.post(`${BACKEND_URL}/auth/signup`, form, {
         withCredentials: true,
       });
       console.log(response);
       toast.success('Signed up successfully!', { id: toastId });
       setTimeout(() => {
-        window.location.href = '/home';
-      }, 1000); 
-    } catch(err) {
+        // Use router.push instead of window.location for smoother navigation
+        router.push('/home');
+      }, 1000);
+    } catch (err) {
       console.error('Signup error:', err);
       let errorMessage = "Something went wrong";
       if (axios.isAxiosError(err)) {
@@ -44,6 +44,10 @@ export default function SignupPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLogin = () => {
+    router.push('/auth/login');
   };
 
   return (
@@ -56,7 +60,7 @@ export default function SignupPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
             </svg>
           </div>
-          <h2 className="text-3xl font-light text-slate-800">Create account</h2>
+          <h2 className="text-3xl font-light text-slate-800 font-mono">Create account</h2>
           <p className="text-md text-slate-500 mt-1">Join us today</p>
         </div>
 
@@ -94,15 +98,32 @@ export default function SignupPage() {
           <button
             onClick={signup}
             disabled={loading}
-            className={`w-full py-3 rounded-xl font-medium shadow-sm transition-all
+            className={`w-full py-3 rounded-xl font-medium shadow-sm transition-all cursor-pointer
               ${loading 
                 ? 'bg-teal-300 cursor-not-allowed text-white' 
-                : 'bg-teal-500 hover:bg-teal-600 text-white hover:shadow-md cursor-pointer'
+                : 'bg-teal-500 hover:bg-teal-600 text-white hover:shadow-md'
               }`}
           >
             {loading ? 'Creating...' : 'Create account'}
           </button>
         </div>
+
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-4 bg-white text-slate-500 font-medium">Or</span>
+          </div>
+        </div>
+
+        <button
+          onClick={handleLogin}
+          className="w-full bg-white border border-teal-200 text-teal-600 py-3 rounded-xl hover:bg-teal-50 hover:border-teal-300 transition font-medium shadow-sm cursor-pointer"
+        >
+          Sign in
+        </button>
+
       </div>
     </div>
   );
