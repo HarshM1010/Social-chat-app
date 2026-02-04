@@ -16,12 +16,25 @@ type SearchUsersResponse = {
   }>;
 };
 
-export default function SearchUsers() {
+type SearchUsersProps = {
+  user: {
+    userId: string;
+    name: string;
+    username: string;
+    email: string;
+    friendsCount: number;
+    groupsCount: number;
+    preference: string | null;
+  } | null;
+};
+
+export default function SearchUsers({ user }: SearchUsersProps) {
   const [query, setQuery] = useState('');
   const [loading,setLoading] = useState(false);
 
   const [searchUsers, { data, loading: searchLoading }] = useLazyQuery<SearchUsersResponse>(SEARCH_USERS, {
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'cache-first',
   });
 
   const [sendRequest] = useMutation(SEND_FRIEND_REQUEST, {
@@ -60,7 +73,7 @@ export default function SearchUsers() {
   });
 
   const refreshSearch = () => {
-    if (query.trim().length > 0) {
+    if (user?.userId && query.trim().length > 0) {
       setTimeout(() => {
         searchUsers({ 
           variables: { username: query }
@@ -71,7 +84,7 @@ export default function SearchUsers() {
 
   const handleSearch = (value: string) => {
     setQuery(value);
-    if (value.trim().length > 0) {
+    if (user?.userId && value.trim().length > 0) {
       searchUsers({ variables: { username: value } });
     }
   };
@@ -239,6 +252,11 @@ export default function SearchUsers() {
 
       {searchLoading && <div className="text-center text-slate-500 text-[13px]">Searching...</div>}
 
+      {
+        !user?.userId && (
+          <div className="text-center text-red-400 text-[13px]">Please login or signup</div>
+        )
+      }
       {users.length === 0 && query && !searchLoading && (
         <div className="text-center text-slate-400 text-[13px]">No users found</div>
       )}

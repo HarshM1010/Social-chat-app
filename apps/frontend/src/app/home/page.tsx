@@ -24,10 +24,7 @@ export default function HomePage() {
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [isGroup, setIsGroup] = useState(false);
 
-  const { data, loading, error } = useQuery<CurrentUserIdResponse>(GET_CURRENT_USER, {
-    fetchPolicy: 'network-only',
-    nextFetchPolicy: 'cache-first',
-  });
+  const { data, error } = useQuery<CurrentUserIdResponse>(GET_CURRENT_USER);
   if(error) {
     console.error("Error fetching current user:", error);
   }
@@ -45,10 +42,6 @@ export default function HomePage() {
       setSelectedUser(null);
     }
   };
-
-  if (loading) {
-    return <div className="h-screen flex items-center justify-center bg-slate-50">Loading...</div>;
-  }
 
   return (
       <div className="h-screen flex bg-slate-50">

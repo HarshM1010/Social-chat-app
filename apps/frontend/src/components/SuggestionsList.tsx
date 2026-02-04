@@ -12,9 +12,25 @@ type GetSuggestionsResponse = {
   getSuggestions: Array<{ userId: string; name: string; username: string }>;
 };
 
-export default function SuggestionsList() {
+type SuggestionsListProps = {
+  user: {
+    userId: string;
+    name: string;
+    username: string;
+    email: string;
+    friendsCount: number;
+    groupsCount: number;
+    preference: string | null;
+  } | null;
+};
+
+export default function SuggestionsList({ user }: SuggestionsListProps) {
   const [loadingSendFr,setLoadingSendFr] = useState(false);
-  const { data, loading, error } = useQuery<GetSuggestionsResponse>(GET_SUGGESTIONS);
+  const { data, loading, error } = useQuery<GetSuggestionsResponse>(GET_SUGGESTIONS,{
+    fetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'cache-first',
+    skip: !user?.userId,
+  });
   const [sendRequest] = useMutation(SEND_FRIEND_REQUEST, {
     refetchQueries: [
       { query: GET_SUGGESTIONS },

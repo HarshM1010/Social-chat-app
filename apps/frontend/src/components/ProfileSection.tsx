@@ -161,7 +161,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
-          {activeTab === 'search' ? <SearchUsers /> : <SuggestionsList />}
+          {activeTab === 'search' ? <SearchUsers  user={user || null} /> : <SuggestionsList user={user || null} />}
         </div>
       </aside>
       <ProfileModal 

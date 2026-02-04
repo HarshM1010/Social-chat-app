@@ -24,7 +24,11 @@ type GroupsListProps = {
 };
 
 export default function GroupsList({ onSelectChat, currentUser }: GroupsListProps) {
-  const { data, loading, error } = useQuery<GetAllGroupsResponse>(GET_ALL_GROUPS);
+  const { data, loading, error } = useQuery<GetAllGroupsResponse>(GET_ALL_GROUPS,{
+    fetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'cache-first',
+    skip: !currentUser.userId,
+  });
   const [currGroupId,setCurrGroupId] = useState(null);
 
   useSubscription(LISTEN_FOR_ADDED_MEMBER, {

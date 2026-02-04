@@ -22,7 +22,11 @@ type RequestsListProps = {
 
 export default function RequestsList({ currentUser }: RequestsListProps) {
   const [loadingRequest,setLoadingRequest] = useState(false);
-  const { data, loading, error } = useQuery<GetAllRequestsResponse>(GET_ALL_REQUESTS);
+  const { data, loading, error } = useQuery<GetAllRequestsResponse>(GET_ALL_REQUESTS,{
+    fetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'cache-first',
+    skip: !currentUser?.userId,
+  });
   
   const [acceptRequest] = useMutation(ACCEPT_FRIEND_REQUEST, {
     refetchQueries: [

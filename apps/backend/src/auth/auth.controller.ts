@@ -62,7 +62,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: express.Response,
     @Body() body: ChangePasswordDto,
   ) {
-    const userId = req.user.sub || req.user.userId;
+    const userId = req.user.sub;
     await this.authService.changePassword(userId, body);
     return res.status(200).json({
       message: 'Password updated successfully',

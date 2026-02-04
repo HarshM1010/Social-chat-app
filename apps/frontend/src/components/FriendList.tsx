@@ -29,6 +29,7 @@ function FriendList({ onSelectChat, currentUser, onFriendRemoved }: FriendListPr
   const { data, loading, error } = useQuery<GetAllFriendsResponse>(GET_ALL_FRIENDS, {
     fetchPolicy: 'cache-and-network',
     nextFetchPolicy: 'cache-first',
+    skip: !currentUser.userId,
   });
 
   useSubscription<FriendRemovedResponse>(LISTEN_FOR_FRIEND_REMOVED, {
@@ -46,16 +47,16 @@ function FriendList({ onSelectChat, currentUser, onFriendRemoved }: FriendListPr
       },1000)
     }
   });
-
+  
   if (loading) return <div className="p-4 text-center text-slate-500">Loading...</div>;
   if (error && currentUser) return <div className="p-4 text-center text-red-500">Error loading friends</div>;
 
   const friends = data?.getAllFriends || [];
 
-  if (!currentUser || friends.length === 0) {
+  if (friends.length === 0) {
     return <EmptyState icon="👥" message="No friends yet" />;
   }
-
+  
   return (
     <div>
       {friends.map((friend: any) => (
