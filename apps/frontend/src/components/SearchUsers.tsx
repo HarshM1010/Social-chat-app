@@ -33,7 +33,7 @@ export default function SearchUsers({ user }: SearchUsersProps) {
   const [loading,setLoading] = useState(false);
 
   const [searchUsers, { data, loading: searchLoading }] = useLazyQuery<SearchUsersResponse>(SEARCH_USERS, {
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-and-network',
     nextFetchPolicy: 'cache-and-network',
   });
 
@@ -75,7 +75,7 @@ export default function SearchUsers({ user }: SearchUsersProps) {
   const refreshSearch = () => {
     if (user?.userId && query.trim().length > 0) {
       setTimeout(() => {
-        searchUsers({ 
+        searchUsers({
           variables: { username: query }
         });
       }, 1000);

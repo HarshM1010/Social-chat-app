@@ -81,6 +81,7 @@ export default function ForgotPasswordPage() {
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
             disabled={loading || (linkSent && !canResend)}
           />
 

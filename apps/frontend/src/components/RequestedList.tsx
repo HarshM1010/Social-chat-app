@@ -32,8 +32,25 @@ export default function RequestedList({ currentUser }: RequestedListProps) {
     refetchQueries: [ 
       {query: GET_ALL_REQUESTED},
       {query: GET_SUGGESTIONS},
-      { query: SEARCH_USERS },
     ],
+    update(cache, {data}, {variables}) {
+      if(variables?.to) {
+        const normalizedId = cache.identify({
+          __typename: 'User',
+          userId: variables.to
+        });
+        if (normalizedId) {
+          cache.modify({
+            id: normalizedId,
+            fields: {
+              requestStatus() {
+                return 'NONE';
+              }
+            }
+          });
+        }
+      }
+    }
   });
 
   useSubscription(LISTEN_FOR_ACCEPTED_REQUEST, {

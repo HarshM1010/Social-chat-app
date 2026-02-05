@@ -50,6 +50,7 @@ export default function ChatWindow({ friendId, user, currentUserId }: ChatWindow
   const [activeMessageId, setActiveMessageId] = useState<string | null>(null);
   const [loadingDelete,setLoadingDelete] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [loadingSend,setLoadingSend] = useState(false);
 
   // 1. Fetch Messages
   const { data, loading, error } = useQuery<GetMessagesResponse>(GET_MESSAGES, {
@@ -110,6 +111,7 @@ export default function ChatWindow({ friendId, user, currentUserId }: ChatWindow
   // 5. Handlers
   const handleSend = async () => {
     if (!text.trim()) return;
+    setLoadingSend(true);
     try {
       await sendMessage({
         variables: { 
@@ -122,12 +124,15 @@ export default function ChatWindow({ friendId, user, currentUserId }: ChatWindow
       setText('');
     } catch (err) {
       console.error('Error sending message:', err);
+    } finally {
+      setLoadingSend(false);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
+      if(loadingSend) return;
       handleSend();
     }
   };
@@ -280,17 +285,18 @@ export default function ChatWindow({ friendId, user, currentUserId }: ChatWindow
             placeholder="Type a message..."
             value={text}
             onChange={(e) => setText(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
+            disabled={loadingSend}
           />
           <button
             onClick={handleSend}
-            disabled={!text.trim()}
+            disabled={!text.trim() || loadingSend}
             className="px-5 py-3 bg-teal-500 text-white rounded-xl hover:bg-teal-600 transition flex items-center gap-2 font-medium shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg className="w-5 h-5 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
             </svg>
-            Send
+            {loadingSend ? "Sending" : "Send"}
           </button>
         </div>
       </div>

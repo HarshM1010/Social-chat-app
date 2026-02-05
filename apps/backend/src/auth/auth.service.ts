@@ -195,8 +195,8 @@ export class AuthService {
         return;
       }
       console.log('Forgot password - user found:', dto.email);
-      console.log('User ID:', result.records[0]?.get('userId'));
       userId = result.records[0]?.get('userId');
+      console.log('User ID:', userId);
     } finally {
       await session.close();
     }
