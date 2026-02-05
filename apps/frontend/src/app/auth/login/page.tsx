@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
 
   const login = async () => {
-    const BACKEND_URL = 'http://localhost:3001';
+    const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
     if (!identifier || !password) {
       toast.error('Please fill in all fields');
