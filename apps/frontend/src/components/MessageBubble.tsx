@@ -1,5 +1,4 @@
 'use client';
-import React from 'react';
 
 type ReadReceipt = {
   userId: string;
@@ -41,7 +40,6 @@ export default function MessageBubble({
         }
       `}>
         
-        {/* === CHEVRON BUTTON (Only for own messages) === */}
         {isOwn && (
           <div className="absolute top-1 right-1 z-10">
             <button

@@ -26,7 +26,7 @@ type GroupsListProps = {
 export default function GroupsList({ onSelectChat, currentUser }: GroupsListProps) {
   const { data, loading, error } = useQuery<GetAllGroupsResponse>(GET_ALL_GROUPS,{
     fetchPolicy: 'network-only',
-    nextFetchPolicy: 'cache-first',
+    nextFetchPolicy: 'cache-and-network',
     skip: !currentUser.userId,
   });
   const [currGroupId,setCurrGroupId] = useState(null);

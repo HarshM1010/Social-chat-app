@@ -70,7 +70,6 @@ export default function HomePage() {
       setSelectedUser(null);
     }
   };
-  console.log(finalUser);
   if (!isAuthChecked) return null;
   return (
       <div className="h-screen flex bg-slate-50">

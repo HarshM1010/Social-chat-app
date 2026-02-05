@@ -27,8 +27,8 @@ type SuggestionsListProps = {
 export default function SuggestionsList({ user }: SuggestionsListProps) {
   const [loadingSendFr,setLoadingSendFr] = useState(false);
   const { data, loading, error } = useQuery<GetSuggestionsResponse>(GET_SUGGESTIONS,{
-    fetchPolicy: 'cache-and-network',
-    nextFetchPolicy: 'cache-first',
+    fetchPolicy: 'network-only',
+    nextFetchPolicy: 'cache-and-network',
     skip: !user?.userId,
   });
   const [sendRequest] = useMutation(SEND_FRIEND_REQUEST, {

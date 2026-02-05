@@ -29,7 +29,7 @@ function FriendList({ onSelectChat, currentUser, onFriendRemoved }: FriendListPr
   console.log(currentUser);
   const { data, loading, error } = useQuery<GetAllFriendsResponse>(GET_ALL_FRIENDS, {
     fetchPolicy: 'network-only', 
-    nextFetchPolicy: 'cache-first',
+    nextFetchPolicy: 'cache-and-network',
     skip: !currentUser.userId,
   });
 
