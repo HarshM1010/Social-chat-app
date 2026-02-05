@@ -26,8 +26,9 @@ type FriendRemovedResponse = {
 };
 
 function FriendList({ onSelectChat, currentUser, onFriendRemoved }: FriendListProps) {
+  console.log(currentUser);
   const { data, loading, error } = useQuery<GetAllFriendsResponse>(GET_ALL_FRIENDS, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: 'network-only', 
     nextFetchPolicy: 'cache-first',
     skip: !currentUser.userId,
   });
@@ -47,7 +48,7 @@ function FriendList({ onSelectChat, currentUser, onFriendRemoved }: FriendListPr
       },1000)
     }
   });
-  
+
   if (loading) return <div className="p-4 text-center text-slate-500">Loading...</div>;
   if (error && currentUser) return <div className="p-4 text-center text-red-500">Error loading friends</div>;
 

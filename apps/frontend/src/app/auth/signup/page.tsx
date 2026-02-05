@@ -28,12 +28,19 @@ export default function SignupPage() {
       const response = await axios.post(`${BACKEND_URL}/auth/signup`, form, {
         withCredentials: true,
       });
-      console.log(response);
       toast.success('Signed up successfully!', { id: toastId });
-      setTimeout(() => {
-        // Use router.push instead of window.location for smoother navigation
-        router.push('/home');
-      }, 1000);
+      const { user } = response.data;
+      if(user && user.userId) {
+        localStorage.setItem('user_static_data', JSON.stringify({
+          userId: user.userId,
+          username: user.username,
+          name: user.name,
+          email: user.email
+        }));
+        setTimeout(() => {
+          router.push('/home');
+        }, 500);
+      }
     } catch (err) {
       console.error('Signup error:', err);
       let errorMessage = "Something went wrong";

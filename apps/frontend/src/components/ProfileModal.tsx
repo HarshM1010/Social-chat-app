@@ -6,18 +6,18 @@ import { useRouter } from 'next/navigation';
 type ProfileModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  user: {
+  finalUser: {
     name: string;
     username: string;
     email: string;
     friendsCount: number;
     groupsCount: number;
     preference: string | null;
-  } | null;
+  }
   onUpdatePreference: (choice: 'Messi' | 'Ronaldo') => void;
 };
 
-export default function ProfileModal({ isOpen, onClose, user, onUpdatePreference }: ProfileModalProps) {
+export default function ProfileModal({ isOpen, onClose, finalUser, onUpdatePreference }: ProfileModalProps) {
   const router = useRouter();
   if (!isOpen) return null;
   const handleChangePassword = () => {
@@ -47,7 +47,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdatePreference
             <div>
               <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Full Name</label>
               <div className="text-slate-500 bg-slate-50 px-3 py-2 rounded-lg border border-slate-100 font-medium cursor-not-allowed">
-                {user?.name}
+                {finalUser?.name}
               </div>
             </div>
             
@@ -55,13 +55,13 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdatePreference
               <div>
                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Username</label>
                 <div className="text-slate-500 bg-slate-50 px-3 py-2 rounded-lg border border-slate-100 font-medium cursor-not-allowed">
-                  @{user?.username}
+                  @{finalUser?.username}
                 </div>
               </div>
               <div>
                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Email</label>
                 <div className="text-slate-500 bg-slate-50 px-3 py-2 rounded-lg border border-slate-100 font-medium cursor-not-allowed truncate">
-                  {user?.email}
+                  {finalUser?.email}
                 </div>
               </div>
             </div>
@@ -74,8 +74,8 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdatePreference
                 <Users size={18} />
               </div>
               <div>
-                <div className="text-xl font-bold text-teal-700">{user?.friendsCount}</div>
-                <div className="text-xs text-teal-600 font-medium">{user?.friendsCount === 1 ? "Friend" : "Friends"}</div>
+                <div className="text-xl font-bold text-teal-700">{finalUser?.friendsCount}</div>
+                <div className="text-xs text-teal-600 font-medium">{finalUser?.friendsCount === 1 ? "Friend" : "Friends"}</div>
               </div>
             </div>
             <div className="bg-teal-50 p-3 rounded-xl flex items-center gap-3 border border-teal-100">
@@ -83,8 +83,8 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdatePreference
                 <Shield size={18} /> {/* Using Shield as icon for Groups/Admin */}
               </div>
               <div>
-                <div className="text-xl font-bold text-teal-700">{user?.groupsCount}</div>
-                <div className="text-xs text-teal-600 font-medium">{user?.groupsCount === 1 ? "Group" : "Groups"}</div>
+                <div className="text-xl font-bold text-teal-700">{finalUser?.groupsCount}</div>
+                <div className="text-xs text-teal-600 font-medium">{finalUser?.groupsCount === 1 ? "Group" : "Groups"}</div>
               </div>
             </div>
           </div>
@@ -100,7 +100,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdatePreference
               <button
                 onClick={() => onUpdatePreference('Messi')}
                 className={`py-3 px-4 rounded-xl border-2 transition-all font-bold cursor-pointer ${
-                  user?.preference === 'Messi'
+                  finalUser?.preference === 'Messi'
                     ? 'border-blue-500 bg-blue-50 text-blue-600 shadow-md transform scale-105'
                     : 'border-slate-200 text-slate-400 hover:border-slate-300'
                 }`}
@@ -110,7 +110,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdatePreference
               <button
                 onClick={() => onUpdatePreference('Ronaldo')}
                 className={`py-3 px-4 rounded-xl border-2 transition-all font-bold cursor-pointer ${
-                  user?.preference === 'Ronaldo'
+                  finalUser?.preference === 'Ronaldo'
                     ? 'border-purple-500 bg-purple-50 text-purple-600 shadow-md transform scale-105'
                     : 'border-slate-200 text-slate-400 hover:border-slate-300'
                 }`}

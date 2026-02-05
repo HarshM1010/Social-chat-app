@@ -155,7 +155,7 @@ export const typeDefs = gql`
         columnName: "u"
       )
 
-    getCurrentUser: User
+    getUserStats: User
       @cypher(
         statement: """
         MATCH (me:User {userId: $jwt.sub})

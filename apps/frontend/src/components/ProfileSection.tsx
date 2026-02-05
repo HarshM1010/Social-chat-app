@@ -8,28 +8,28 @@ import ProfileModal from './ProfileModal';
 import { useMutation, useApolloClient } from '@apollo/client/react';
 import { SUBMIT_ANSWER } from '@/graphql/mutations';
 import { toast } from 'react-hot-toast';
-import { GET_CURRENT_USER, GET_SUGGESTIONS } from '@/graphql/queries';
+import { GET_SUGGESTIONS, GET_USER_STATS } from '@/graphql/queries';
 import axios from 'axios';
 
 type ProfileSectionProps = {
-  user: {
-    userId: string;
-    name: string;
-    username: string;
-    email: string;
-    friendsCount: number;
-    groupsCount: number;
-    preference: string | null;
-  } | null;
+    finalUser: {
+      userId: string;
+      name: string;
+      username: string;
+      email: string;
+      friendsCount: number;
+      groupsCount: number;
+      preference: string | null;
+    }
 };
 
-export default function ProfileSection({ user }: ProfileSectionProps) {
+export default function ProfileSection({ finalUser }: ProfileSectionProps) {
   const [activeTab, setActiveTab] = useState<'search' | 'suggestions'>('search');
-  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const BACKEND_URL = 'http://localhost:3001';
 
   const [updatePreference] = useMutation(SUBMIT_ANSWER, {
     refetchQueries: [
-      { query: GET_CURRENT_USER },
+      { query: GET_USER_STATS },
       { query: GET_SUGGESTIONS }
     ],
     awaitRefetchQueries: true,
@@ -41,7 +41,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
   const client = useApolloClient();
 
   const handleUpdatePreference = async (choice: 'Messi' | 'Ronaldo') => {
-    if (!user) return;
+    if (!finalUser) return;
     const optionId = choice === 'Messi' ? 'opt-messi' : 'opt-ronaldo';
     setLoading(true);
     const toastId = toast.loading('Updating preference...');
@@ -70,8 +70,13 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
         method: 'POST',
         credentials: 'include',
       });
+      localStorage.removeItem('user_static_data');
+      try {
+        await client.clearStore();
+      } catch(err) {
+        console.warn("Apollo Store reset suppressed (harmless during logout)", err);
+      }
       toast.success('Logged out successfully', { id: toastId });
-      await client.clearStore();
       setTimeout(() => {
         router.push('/auth/login');
       }, 100);
@@ -100,7 +105,7 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
       <aside className="w-90 bg-white border-l border-teal-100 flex flex-col">
         {/* Profile Header */}
         <div className="p-4 border-b border-teal-100 flex justify-between items-center">
-          {user ? (
+          {finalUser ? (
             <>
               <button 
               onClick={() => setIsProfileOpen(true)}
@@ -161,13 +166,13 @@ export default function ProfileSection({ user }: ProfileSectionProps) {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
-          {activeTab === 'search' ? <SearchUsers  user={user || null} /> : <SuggestionsList user={user || null} />}
+          {activeTab === 'search' ? <SearchUsers  user={finalUser || null} /> : <SuggestionsList user={finalUser || null} />}
         </div>
       </aside>
       <ProfileModal 
         isOpen={isProfileOpen} 
         onClose={() => setIsProfileOpen(false)}
-        user={user}
+        finalUser={finalUser}
         onUpdatePreference={handleUpdatePreference}
       />
     </>

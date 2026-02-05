@@ -1,35 +1,63 @@
 // src/app/home/page.tsx
 'use client';
-import { useState, useCallback } from 'react';
-import { useQuery } from '@apollo/client/react'; // Import useQuery
-import { GET_CURRENT_USER } from '@/graphql/queries'; // Import the query
+import { useState, useCallback, useEffect } from 'react';
+import { useQuery } from '@apollo/client/react';
+import { GET_USER_STATS } from '@/graphql/queries';
 import Sidebar from '@/components/Sidebar';
 import ChatWindow from '@/components/ChatWindow';
 import GroupChatWindow from '@/components/GroupChatWindow';
 import ProfileSection from '@/components/ProfileSection';
 
-type CurrentUserIdResponse = {
-  getCurrentUser?: {
-    username: string;
-    userId: string;
-    name: string;
-    email: string;
+type UserStatsResponse = {
+  getUserStats: {
     friendsCount: number;
     groupsCount: number;
-    preference: string | null;
-  } | null;
-}
+    preference: string;
+  }
+};
+
 export default function HomePage() {
   const [selectedChat, setSelectedChat] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [isGroup, setIsGroup] = useState(false);
 
-  const { data, error } = useQuery<CurrentUserIdResponse>(GET_CURRENT_USER);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
+
+  useEffect(() => {
+  const timer = setTimeout(() => {
+    if (typeof window !== 'undefined') {
+      const storedData = localStorage.getItem('user_static_data');
+      if (storedData) {
+        try {
+          setCurrentUser(JSON.parse(storedData));
+        } catch (err) {
+          console.error("Error parsing user data",err);
+          setCurrentUser(null);
+        }
+      }
+    }
+    setIsAuthChecked(true);
+  }, 0);
+  return () => clearTimeout(timer);
+}, []);
+  
+  const { data: statsData, error } = useQuery<UserStatsResponse>(GET_USER_STATS, {
+    fetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'cache-first',
+    skip: !currentUser?.userId
+  });
   if(error) {
-    console.error("Error fetching current user:", error);
+    console.error("Error fetching user stats:", error);
   }
-  const currentUserId = data?.getCurrentUser?.userId || ''; 
-  const currentUsername = data?.getCurrentUser?.username || '';
+  const finalUser = currentUser ? {
+    ...currentUser,
+    friendsCount: statsData?.getUserStats?.friendsCount || 0,
+    groupsCount: statsData?.getUserStats?.groupsCount || 0,
+    preference: statsData?.getUserStats?.preference || null,
+  }: null;
+  const currentUserId = currentUser?.userId || '';
+  const currentUsername = currentUser?.username || '';
   const handleSelectChat = useCallback((userId: string | null, user: any, isGroupChat = false) => {
     setSelectedChat(userId);
     setSelectedUser(user);
@@ -42,7 +70,8 @@ export default function HomePage() {
       setSelectedUser(null);
     }
   };
-
+  console.log(finalUser);
+  if (!isAuthChecked) return null;
   return (
       <div className="h-screen flex bg-slate-50">
         <Sidebar 
@@ -77,7 +106,7 @@ export default function HomePage() {
             </div>
           )}
         </main>
-        <ProfileSection user={data?.getCurrentUser || null} />
+        <ProfileSection finalUser={finalUser} />
       </div>
   );
 }

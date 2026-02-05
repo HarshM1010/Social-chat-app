@@ -15,15 +15,15 @@ export class AuthController {
     @Res({ passthrough: true }) res: express.Response,
     @Body() body: SignupDto,
   ) {
-    const token = await this.authService.signup(body);
+    const { token, user } = await this.authService.signup(body);
     res.cookie('access_token', token, {
       httpOnly: true,
-      secure: true, // true in production (HTTPS)
+      secure: true,
       sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000, //7 days
     });
 
-    return { success: true };
+    return { success: true, user };
   }
 
   @Post('login')
@@ -31,16 +31,16 @@ export class AuthController {
     @Res({ passthrough: true }) res: express.Response,
     @Body() body: LoginDto,
   ) {
-    const token = await this.authService.login(body);
+    const { token, user } = await this.authService.login(body);
     res.cookie('access_token', token, {
       httpOnly: true,
-      secure: true, // true in production (HTTPS)
+      secure: true,
       sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000, //7 days
       path: '/',
     });
 
-    return { success: true };
+    return { success: true, user };
   }
 
   @UseGuards(RestAuthGuard)

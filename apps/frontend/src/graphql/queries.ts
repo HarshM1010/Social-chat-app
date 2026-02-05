@@ -118,13 +118,9 @@ export const GET_ALL_ADMINS = gql`
   }
 `;
 
-export const GET_CURRENT_USER = gql`
-  query GetCurrentUser {
-    getCurrentUser {
-      userId
-      username
-      name
-      email
+export const GET_USER_STATS = gql`
+  query GetUserStats {
+    getUserStats {
       friendsCount
       groupsCount
       preference

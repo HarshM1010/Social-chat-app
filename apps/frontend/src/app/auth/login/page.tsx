@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
 
   const login = async () => {
-    const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    const BACKEND_URL = 'http://localhost:3001';
 
     if (!identifier || !password) {
       toast.error('Please fill in all fields');
@@ -24,11 +24,20 @@ export default function LoginPage() {
       const response = await axios.post(`${BACKEND_URL}/auth/login`, { identifier, password }, {
         withCredentials: true,
       });
-      console.log(response);
       toast.success('Logged in successfully!', { id: toastId });
-      setTimeout(() => {
-        router.push('/home');
-      }, 500);
+
+      const { user } = response.data;
+      if(user && user.userId) {
+        localStorage.setItem('user_static_data', JSON.stringify({
+          userId: user.userId,
+          username: user.username,
+          name: user.name,
+          email: user.email
+        }));
+        setTimeout(() => {
+          router.push('/home');
+        }, 500);
+      }
     } catch (err) {
       console.error('Login error:', err);
       let errorMessage = "Something went wrong";

@@ -86,7 +86,15 @@ export class AuthService {
         email: dto.email,
       });
 
-      return token;
+      return {
+        token,
+        user: {
+          userId: userId,
+          username: dto.username.toLowerCase(),
+          name: dto.name,
+          email: dto.email,
+        },
+      };
     } finally {
       await session.close();
     }
@@ -123,7 +131,15 @@ export class AuthService {
         email: user.email,
       });
 
-      return token;
+      return {
+        token,
+        user: {
+          userId: user.userId,
+          username: user.username,
+          name: user.name,
+          email: user.email,
+        },
+      };
     } finally {
       await session.close();
     }
