@@ -24,7 +24,7 @@ export default function RequestsList({ currentUser }: RequestsListProps) {
   const [loadingRequest,setLoadingRequest] = useState(false);
   const { data, loading, error } = useQuery<GetAllRequestsResponse>(GET_ALL_REQUESTS,{
     fetchPolicy: 'network-only',
-    nextFetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'cache-only',
     skip: !currentUser?.userId,
   });
   

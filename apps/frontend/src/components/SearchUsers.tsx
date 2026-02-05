@@ -34,7 +34,7 @@ export default function SearchUsers({ user }: SearchUsersProps) {
 
   const [searchUsers, { data, loading: searchLoading }] = useLazyQuery<SearchUsersResponse>(SEARCH_USERS, {
     fetchPolicy: 'cache-and-network',
-    nextFetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'cache-only',
   });
 
   const [sendRequest] = useMutation(SEND_FRIEND_REQUEST, {

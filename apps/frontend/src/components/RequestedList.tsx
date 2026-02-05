@@ -24,7 +24,7 @@ type RequestedListProps = {
 export default function RequestedList({ currentUser }: RequestedListProps) {
   const { data, loading, error } = useQuery<GetAllRequestedResponse>(GET_ALL_REQUESTED, {
     fetchPolicy:  'network-only',
-    nextFetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'cache-only',
     skip: !currentUser?.userId,
   });
   const [loadingSent,setLoadingSent] = useState(false);

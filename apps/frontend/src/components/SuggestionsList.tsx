@@ -28,7 +28,7 @@ export default function SuggestionsList({ user }: SuggestionsListProps) {
   const [loadingSendFr,setLoadingSendFr] = useState(false);
   const { data, loading, error } = useQuery<GetSuggestionsResponse>(GET_SUGGESTIONS,{
     fetchPolicy: 'network-only',
-    nextFetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'cache-only',
     skip: !user?.userId,
   });
   const [sendRequest] = useMutation(SEND_FRIEND_REQUEST, {
